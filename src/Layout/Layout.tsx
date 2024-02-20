@@ -13,7 +13,6 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import {  useState } from 'react';
-// import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 interface Props {
     window?: () => Window;
@@ -21,13 +20,10 @@ interface Props {
 
 const drawerWidth = 240;
 
-// const defaultEnv = 'production';
-// export const EnvContext = createContext(defaultEnv);
 
 export const Layout = (props: Props) => {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = useState(false);
-    // const [env, setEnv] = useState<string>(defaultEnv);
     const navigate = useNavigate();
 
     const handleDrawerToggle = () => {
@@ -83,27 +79,6 @@ export const Layout = (props: Props) => {
                             {'Transaction History'}
                         </Button>
                     </Box>
-                    {/* <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                        <Button key={'UsersActivity'} sx={{ color: '#fff' }} onClick={() => navigate('/activity-stats')}>
-                            {'Users Activity'}
-                        </Button>
-                    </Box> */}
-                    {/* <FormControl sx={{ marginTop: 'auto' }}>
-                        <InputLabel id="demo-simple-select-label">ENV</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={env}
-                            label="Env"
-                            onChange={(e: any) => {
-                                setEnv(e.target.value);
-                            }}
-                        >
-                            <MenuItem value={'dev'}>Dev</MenuItem>
-                            <MenuItem value={'stage'}>Playtest</MenuItem>
-                            <MenuItem value={'production'}>Prod</MenuItem>
-                        </Select>
-                    </FormControl> */}
                 </Toolbar>
             </AppBar>
             <nav>
@@ -113,7 +88,7 @@ export const Layout = (props: Props) => {
                     open={mobileOpen}
                     onClose={handleDrawerToggle}
                     ModalProps={{
-                        keepMounted: true, // Better open performance on mobile.
+                        keepMounted: true,
                     }}
                     sx={{
                         display: { xs: 'block', sm: 'none' },
@@ -125,9 +100,7 @@ export const Layout = (props: Props) => {
             </nav>
             <Box component="main" sx={{ p: 3, display: 'block', width: '100%' }}>
                 <Toolbar />
-                {/* <EnvContext.Provider value={env}> */}
                     <Outlet />
-                {/* </EnvContext.Provider> */}
             </Box>
         </Box>
     );
