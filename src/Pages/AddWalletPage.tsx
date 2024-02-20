@@ -1,4 +1,4 @@
-import { Button, Checkbox, FormControl, FormGroup, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material"
+import { Button, Checkbox, Container, FormControl, FormGroup, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material"
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react"
 import { baseUrl, getChainIconUrl, getChainName } from "../config";
@@ -103,78 +103,80 @@ export const AddWalletPage = () => {
 
     return (
         <>
-            <Paper>
-                <Typography component='h2' variant='h4' align="left" padding={2}>Add New Wallet</Typography>
+            <Container>
+                <Paper sx={{ marginBottom: 4 }}>
+                    <Typography component='h2' variant='h4' align="center" padding={2}>Add New Wallet</Typography>
 
-                <FormGroup sx={{ maxWidth: 600, height: 300, padding: '20px 0 30px 30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                    <TextField fullWidth label="Wallet Address" variant="outlined" onChange={(e) => setFormField('walletAddress', e.target.value)} />
-                    <TextField fullWidth label="Title" variant="outlined" onChange={(e) => setFormField('title', e.target.value)} />
-                    <FormControl>
-                        <InputLabel id="demo-multiple-checkbox-label">Chains</InputLabel>
-                        <Select
-                            labelId="demo-multiple-checkbox-label"
-                            id="demo-multiple-checkbox"
-                            multiple
-                            value={formData.chainIds}
-                            onChange={(e) => {
-                                console.log(e.target.value);
-                                setFormData(prev => ({
-                                    ...prev,
-                                    chainIds: !e.target.value ? [] : typeof e.target.value === 'string' ? [e.target.value] : [...e.target.value]
-                                }));
-                            }}
-                            input={<OutlinedInput label="Chain" />}
-                            renderValue={(selected) => chains.filter((s) => selected.some(q => q === s.id)).map(s => s.name).join(', ')}
-                            MenuProps={MenuProps}
-                        >
-                            {chains.map((chain) => (
-                                <MenuItem key={chain.id} value={chain.id}>
-                                    <Checkbox checked={formData.chainIds.some(s => s === chain.id)} />
-                                    <ListItemText primary={chain.name} />
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <Button variant='contained' onClick={addWalletRequest}>Add</Button>
-                </FormGroup>
-            </Paper>
+                    <FormGroup sx={{ maxWidth: 600, height: 300, padding: '20px 0 30px 30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', marginLeft: 'auto', marginRight: 'auto' }}>
+                        <TextField fullWidth label="Wallet Address" variant="outlined" onChange={(e) => setFormField('walletAddress', e.target.value)} />
+                        <TextField fullWidth label="Title" variant="outlined" onChange={(e) => setFormField('title', e.target.value)} />
+                        <FormControl>
+                            <InputLabel id="demo-multiple-checkbox-label">Chains</InputLabel>
+                            <Select
+                                labelId="demo-multiple-checkbox-label"
+                                id="demo-multiple-checkbox"
+                                multiple
+                                value={formData.chainIds}
+                                onChange={(e) => {
+                                    console.log(e.target.value);
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        chainIds: !e.target.value ? [] : typeof e.target.value === 'string' ? [e.target.value] : [...e.target.value]
+                                    }));
+                                }}
+                                input={<OutlinedInput label="Chain" />}
+                                renderValue={(selected) => chains.filter((s) => selected.some(q => q === s.id)).map(s => s.name).join(', ')}
+                                MenuProps={MenuProps}
+                            >
+                                {chains.map((chain) => (
+                                    <MenuItem key={chain.id} value={chain.id}>
+                                        <Checkbox checked={formData.chainIds.some(s => s === chain.id)} />
+                                        <ListItemText primary={chain.name} />
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <Button variant='contained' onClick={addWalletRequest}>Add</Button>
+                    </FormGroup>
+                </Paper>
 
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 800 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="left">Wallet Address</TableCell>
-                            <TableCell align="left">Title</TableCell>
-                            <TableCell align="left">Chains</TableCell>
-                            <TableCell align="left">Notification counts</TableCell>
-                            <TableCell align="left">Created At</TableCell>
-                            <TableCell align="left">Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {wallets.map(s => (
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 800 }} aria-label="simple table">
+                        <TableHead>
                             <TableRow>
-                                <TableCell>{s.address}</TableCell>
-                                <TableCell>{s.title}</TableCell>
-                                <TableCell>
-                                    {s.chainIds.map(s => (
-                                        <p>
-                                            <img style={{ verticalAlign: 'middle' }} src={getChainIconUrl(s)} alt="Icon" width={24} /> {getChainName(s)}
-                                        </p>
-                                    ))}
-                                </TableCell>
-                                <TableCell>{s.notificationsCount}</TableCell>
-                                <TableCell>{s.createdAt.toLocaleString()}</TableCell>
-                                <TableCell>
-                                    <IconButton onClick={() => deleteStreamCallback(s.address)}>
-                                        <Delete style={{ color: 'red' }} />
-                                    </IconButton>
-                                </TableCell>
+                                <TableCell align="left">Wallet Address</TableCell>
+                                <TableCell align="left">Title</TableCell>
+                                <TableCell align="left">Chains</TableCell>
+                                <TableCell align="left">Notification counts</TableCell>
+                                <TableCell align="left">Created At</TableCell>
+                                <TableCell align="left">Actions</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                            {wallets.map(s => (
+                                <TableRow>
+                                    <TableCell>{s.address}</TableCell>
+                                    <TableCell>{s.title}</TableCell>
+                                    <TableCell>
+                                        {s.chainIds.map(s => (
+                                            <p>
+                                                <img style={{ verticalAlign: 'middle' }} src={getChainIconUrl(s)} alt="Icon" width={24} /> {getChainName(s)}
+                                            </p>
+                                        ))}
+                                    </TableCell>
+                                    <TableCell>{s.notificationsCount}</TableCell>
+                                    <TableCell>{s.createdAt.toLocaleString()}</TableCell>
+                                    <TableCell>
+                                        <IconButton onClick={() => deleteStreamCallback(s.address)}>
+                                            <Delete style={{ color: 'red' }} />
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Container>
         </>
     )
 }
