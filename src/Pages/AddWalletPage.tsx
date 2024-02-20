@@ -1,7 +1,7 @@
-import { Button, FormGroup, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material"
+import { Button, Checkbox, FormControl, FormGroup, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material"
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react"
-import { baseUrl } from "../config";
+import { baseUrl, getChainIconUrl, getChainName } from "../config";
 import { Delete } from "@mui/icons-material";
 
 interface IWalletDataApiRequest {
@@ -20,7 +20,29 @@ interface IWalletData {
     createdAt: Date;
 }
 
-export const getWallets = async () => {
+interface IAddWalletFormData {
+    walletAddress: string,
+    title: string,
+    chainIds: string[]
+}
+
+interface Chain {
+    id: string,
+    name: string;
+}
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+
+const getWallets = async () => {
     const res = await axios.get(`${baseUrl}/api/admin/get-wallets`);
     const wallets = (res.data as IWalletDataApiRequest[]).map(s => ({
         address: s.address,
@@ -33,26 +55,35 @@ export const getWallets = async () => {
     return wallets;
 }
 
-interface IAddWalletFormData {
-    walletAddress: string,
-    title: string,
-    chainId: string
+const getChains = async () => {
+    const res = await axios.get(`${baseUrl}/api/admin/supported-chains`);
+    return res.data as Chain[];
 }
+
 
 export const AddWalletPage = () => {
     const [wallets, setWallets] = useState<IWalletData[]>([]);
     const [formData, setFormData] = useState<IAddWalletFormData>({
         walletAddress: '',
         title: '',
-        chainId: ''
-    })
+        chainIds: []
+    });
+
+    const [chains, setChains] = useState<Chain[]>([]);
+
 
     useEffect(() => {
         (async () => {
             const data = await getWallets();
+            const chains = await getChains();
+            setChains(chains);
             setWallets(data);
         })();
     }, [])
+
+    useEffect(() => {
+        console.log(formData);
+    }, [formData])
 
     const deleteStreamCallback = useCallback(async (address: string) => {
         await axios.delete(`${baseUrl}/api/admin/stream/${address}`);
@@ -78,7 +109,32 @@ export const AddWalletPage = () => {
                 <FormGroup sx={{ maxWidth: 600, height: 300, padding: '20px 0 30px 30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <TextField fullWidth label="Wallet Address" variant="outlined" onChange={(e) => setFormField('walletAddress', e.target.value)} />
                     <TextField fullWidth label="Title" variant="outlined" onChange={(e) => setFormField('title', e.target.value)} />
-                    <TextField fullWidth label="Chain Id" variant="outlined" onChange={(e) => setFormField('chainId', e.target.value)} />
+                    <FormControl>
+                        <InputLabel id="demo-multiple-checkbox-label">Chains</InputLabel>
+                        <Select
+                            labelId="demo-multiple-checkbox-label"
+                            id="demo-multiple-checkbox"
+                            multiple
+                            value={formData.chainIds}
+                            onChange={(e) => {
+                                console.log(e.target.value);
+                                setFormData(prev => ({
+                                    ...prev,
+                                    chainIds: !e.target.value ? [] : typeof e.target.value === 'string' ? [e.target.value] : [...e.target.value]
+                                }));
+                            }}
+                            input={<OutlinedInput label="Chain" />}
+                            renderValue={(selected) => chains.filter((s) => selected.some(q => q === s.id)).map(s => s.name).join(', ')}
+                            MenuProps={MenuProps}
+                        >
+                            {chains.map((chain) => (
+                                <MenuItem key={chain.id} value={chain.id}>
+                                    <Checkbox checked={formData.chainIds.some(s => s === chain.id)} />
+                                    <ListItemText primary={chain.name} />
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                     <Button variant='contained' onClick={addWalletRequest}>Add</Button>
                 </FormGroup>
             </Paper>
@@ -100,7 +156,13 @@ export const AddWalletPage = () => {
                             <TableRow>
                                 <TableCell>{s.address}</TableCell>
                                 <TableCell>{s.title}</TableCell>
-                                <TableCell>{s.chainIds.join(', ')}</TableCell>
+                                <TableCell>
+                                    {s.chainIds.map(s => (
+                                        <p>
+                                            <img style={{ verticalAlign: 'middle' }} src={getChainIconUrl(s)} alt="Icon" width={24} /> {getChainName(s)}
+                                        </p>
+                                    ))}
+                                </TableCell>
                                 <TableCell>{s.notificationsCount}</TableCell>
                                 <TableCell>{s.createdAt.toLocaleString()}</TableCell>
                                 <TableCell>
