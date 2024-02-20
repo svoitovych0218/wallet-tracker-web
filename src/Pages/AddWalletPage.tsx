@@ -71,7 +71,6 @@ export const AddWalletPage = () => {
 
     const [chains, setChains] = useState<Chain[]>([]);
 
-
     useEffect(() => {
         (async () => {
             const data = await getWallets();
@@ -80,10 +79,6 @@ export const AddWalletPage = () => {
             setWallets(data);
         })();
     }, [])
-
-    useEffect(() => {
-        console.log(formData);
-    }, [formData])
 
     const deleteStreamCallback = useCallback(async (address: string) => {
         await axios.delete(`${baseUrl}/api/admin/stream/${address}`);
