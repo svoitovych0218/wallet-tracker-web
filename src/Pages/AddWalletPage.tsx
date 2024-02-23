@@ -1,8 +1,8 @@
-import { Button, Checkbox, Container, FormControl, FormGroup, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material"
+import { Button, Checkbox, CircularProgress, Container, FormControl, FormGroup, IconButton, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material"
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react"
 import { baseUrl, getChainIconUrl, getChainName } from "../config";
-import { Delete } from "@mui/icons-material";
+import { Delete, Preview } from "@mui/icons-material";
 
 interface IWalletDataApiRequest {
     address: string,
@@ -68,7 +68,9 @@ export const AddWalletPage = () => {
         title: '',
         chainIds: []
     });
-
+    const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
+    const [isDeleateInProgress, setIsDeleateInProgress] = useState<Record<string, boolean>>({});
+    const [isCreationInProgress, setIsCreationInProgress] = useState<boolean>(false);
     const [chains, setChains] = useState<Chain[]>([]);
 
     useEffect(() => {
@@ -77,12 +79,15 @@ export const AddWalletPage = () => {
             const chains = await getChains();
             setChains(chains);
             setWallets(data);
+            setIsDataLoading(false);
         })();
     }, [])
 
     const deleteStreamCallback = useCallback(async (address: string) => {
+        setIsDeleateInProgress(prev => ({ ...prev, [address]: true }));
         await axios.delete(`${baseUrl}/api/admin/stream/${address}`);
         setWallets(prev => [...prev.filter(s => s.address !== address)]);
+        setIsDeleateInProgress(prev => ({ ...prev, [address]: false }));
     }, [setWallets]);
 
     const setFormField = useCallback((key: keyof (IAddWalletFormData), value: string) => {
@@ -93,7 +98,11 @@ export const AddWalletPage = () => {
     }, [setFormData])
 
     const addWalletRequest = useCallback(async () => {
+        setIsCreationInProgress(true);
         await axios.post(`${baseUrl}/api/admin/create-stream`, formData);
+        const data = await getWallets();
+        setWallets(data);
+        setIsCreationInProgress(false)
     }, [formData]);
 
     return (
@@ -123,7 +132,7 @@ export const AddWalletPage = () => {
                                 renderValue={(selected) => chains.filter((s) => selected.some(q => q === s.id)).map(s => s.name).join(', ')}
                                 MenuProps={MenuProps}
                             >
-                                {chains.map((chain) => (
+                                {isDataLoading ? <CircularProgress sx={{ marginLeft: '10px' }} /> : chains.map((chain) => (
                                     <MenuItem key={chain.id} value={chain.id}>
                                         <Checkbox checked={formData.chainIds.some(s => s === chain.id)} />
                                         <ListItemText primary={chain.name} />
@@ -131,7 +140,7 @@ export const AddWalletPage = () => {
                                 ))}
                             </Select>
                         </FormControl>
-                        <Button variant='contained' onClick={addWalletRequest}>Add</Button>
+                        <Button disabled={isCreationInProgress} variant='contained' onClick={addWalletRequest}>Add</Button>
                     </FormGroup>
                 </Paper>
 
@@ -155,15 +164,20 @@ export const AddWalletPage = () => {
                                     <TableCell>
                                         {s.chainIds.map(s => (
                                             <p>
-                                                <img style={{ verticalAlign: 'middle' }} src={getChainIconUrl(s)} alt="Icon" width={24} /> {getChainName(s)}
+                                                <img
+                                                    style={{ verticalAlign: 'middle' }}
+                                                    src={getChainIconUrl(s)}
+                                                    alt="Icon"
+                                                    width={24} />
+                                                {getChainName(s)}
                                             </p>
                                         ))}
                                     </TableCell>
                                     <TableCell>{s.notificationsCount}</TableCell>
                                     <TableCell>{s.createdAt.toLocaleString()}</TableCell>
                                     <TableCell>
-                                        <IconButton onClick={() => deleteStreamCallback(s.address)}>
-                                            <Delete style={{ color: 'red' }} />
+                                        <IconButton disabled={isDeleateInProgress[s.address]} onClick={() => deleteStreamCallback(s.address)}>
+                                            {isDeleateInProgress[s.address] ? <CircularProgress /> : <Delete style={{ color: 'red' }} />}
                                         </IconButton>
                                     </TableCell>
                                 </TableRow>
