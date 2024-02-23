@@ -69,7 +69,7 @@ export const TransactionHistory = () => {
     return (
         <>
             <Container>
-                <div style={{ maxWidth: 1200, minWidth: 1200 }}>
+                <div style={{ maxWidth: 1200 }}>
                     <Paper sx={{ padding: '20px 20px 30px 20px', margin: '10px 0 20px 0' }}>
                         <Typography variant="h4" component='h4'>Transaction History
                             <IconButton style={{ float: 'right' }} onClick={() => setCounter(prev => prev + 1)}>
@@ -110,7 +110,7 @@ export const TransactionHistory = () => {
                                         {transactions.map(s => (
                                             <>
                                                 <TableRow>
-                                                    <TableCell rowSpan={s.transfers.length}>{`${s.walletAddress.slice(0,5)}...${s.walletAddress.slice(-5)}`}</TableCell>
+                                                    <TableCell rowSpan={s.transfers.length}><a href={getExplorerAddressUrl(s.chainId, s.walletAddress)} target="_blank" rel="noreferrer">{`${s.walletAddress.slice(0, 5)}...${s.walletAddress.slice(-5)}`}</a></TableCell>
                                                     <TableCell rowSpan={s.transfers.length}><a href={`${getExplorerTxUrl(s.chainId, s.txHash)}`} target="_blank" rel="noreferrer">View Explorer</a></TableCell>
                                                     <TableCell rowSpan={s.transfers.length}>{s.at.toLocaleString()}</TableCell>
                                                     <TableCell rowSpan={s.transfers.length}>

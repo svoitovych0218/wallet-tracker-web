@@ -30,7 +30,7 @@ export const Layout = (props: Props) => {
     const drawer = (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
             <Typography variant="h6" sx={{ my: 2 }}>
-                MUI
+                Wallet Tracker
             </Typography>
             <Divider />
             <Box sx={{ display: { xs: 'block', sm: 'none', marginBottom: 10 } }}>
