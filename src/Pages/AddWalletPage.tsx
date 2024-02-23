@@ -2,7 +2,7 @@ import { Button, Checkbox, CircularProgress, Container, FormControl, FormGroup, 
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react"
 import { baseUrl, getChainIconUrl, getChainName } from "../config";
-import { Delete, Preview } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 
 interface IWalletDataApiRequest {
     address: string,
