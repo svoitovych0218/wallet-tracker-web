@@ -12,7 +12,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import {  useState } from 'react';
+import { useState } from 'react';
 
 interface Props {
     window?: () => Window;
@@ -36,13 +36,16 @@ export const Layout = (props: Props) => {
                 MUI
             </Typography>
             <Divider />
-            <List>
-                <ListItem key={'Tournaments'} disablePadding>
-                    <ListItemButton sx={{ textAlign: 'center' }}>
-                        <Link to={'/tournaments'} />
-                    </ListItemButton>
-                </ListItem>
-            </List>
+            <Box sx={{ display: { xs: 'block', sm: 'none', marginBottom: 10 } }}>
+                <Button key={'AddWallet'} sx={{ color: 'blue' }} onClick={() => navigate('/add-wallet')}>
+                    {'Add Wallet'}
+                </Button>
+            </Box>
+            <Box sx={{ display: { xs: 'block', sm: 'block' } }}>
+                <Button key={'TransactionHistory'} sx={{ color: 'blue' }} onClick={() => navigate('/transactions')}>
+                    {'Transaction History'}
+                </Button>
+            </Box>
         </Box>
     );
 
@@ -100,7 +103,7 @@ export const Layout = (props: Props) => {
             </nav>
             <Box component="main" sx={{ p: 3, display: 'block', width: '100%' }}>
                 <Toolbar />
-                    <Outlet />
+                <Outlet />
             </Box>
         </Box>
     );

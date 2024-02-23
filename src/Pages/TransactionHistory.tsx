@@ -1,4 +1,4 @@
-import { CircularProgress, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
+import { CircularProgress, Container, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
 import axios from "axios";
 import { baseUrl, getChainIconUrl, getChainName, getExplorerAddressUrl, getExplorerTxUrl } from "../config";
 import { useEffect, useState } from "react";
@@ -68,7 +68,7 @@ export const TransactionHistory = () => {
     }, [counter]);
     return (
         <>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Container>
                 <div style={{ maxWidth: 1200, minWidth: 1200 }}>
                     <Paper sx={{ padding: '20px 20px 30px 20px', margin: '10px 0 20px 0' }}>
                         <Typography variant="h4" component='h4'>Transaction History
@@ -79,7 +79,7 @@ export const TransactionHistory = () => {
                     </Paper>
 
                     <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 800 }} aria-label="simple table">
+                        <Table sx={{ minWidth: 1000, width: '100%' }} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Wallet Address</TableCell>
@@ -182,7 +182,7 @@ export const TransactionHistory = () => {
                         </Table>
                     </TableContainer>
                 </div>
-            </div>
+            </Container>
         </>
     )
 }

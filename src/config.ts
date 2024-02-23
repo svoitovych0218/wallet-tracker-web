@@ -21,13 +21,14 @@ export const chainsData: Record<string, ChainData> = {
     "0x2105": { baseUrl: 'https://basescan.org', name: 'Base', iconUrl: 'https://icons.llamao.fi/icons/chains/rsz_base.jpg' }
 }
 
+export const getChainIconUrl = (chainId: string) => chainsData[chainId].iconUrl;
+export const getChainName = (chainId: string) => chainsData[chainId].name;
+
 export const getExplorerTxUrl = (chainId: string, txHash: string) => {
     const baseExplorerUrl = chainsData[chainId].baseUrl;
     return `${baseExplorerUrl}/tx/${txHash}`;
 }
 
-export const getChainName = (chainId: string) => chainsData[chainId].name;
-export const getChainIconUrl = (chainId: string) => chainsData[chainId].iconUrl;
 
 export const getExplorerAddressUrl = (chainId: string, address: string) => {
     const baseExplorerUrl = chainsData[chainId].baseUrl;
